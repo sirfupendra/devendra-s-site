@@ -1,4 +1,3 @@
-// src/pages/PropertyDetail.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../api";
@@ -6,6 +5,7 @@ import API from "../api";
 const PropertyDetail = () => {
   const { id } = useParams();
   const [property, setProperty] = useState(null);
+  const [modalImg, setModalImg] = useState(null);
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -26,7 +26,8 @@ const PropertyDetail = () => {
             key={i}
             src={img}
             alt={`Property ${i}`}
-            style={{ width: 300, height: 200, objectFit: "cover", borderRadius: 8 }}
+            style={{ width: 300, height: 200, objectFit: "cover", borderRadius: 8, cursor: "pointer" }}
+            onClick={() => setModalImg(img)}
           />
         ))}
       </div>
@@ -37,6 +38,35 @@ const PropertyDetail = () => {
       <p><strong>Furnishing:</strong> {property.furnishing}</p>
       <p><strong>Status:</strong> {property.status}</p>
       <p><strong>Description:</strong> {property.description}</p>
+
+      {/* Modal for large image */}
+      {modalImg && (
+        <div
+          onClick={() => setModalImg(null)}
+          style={{
+            position: "fixed",
+            top: 0, left: 0, right: 0, bottom: 0,
+            background: "rgba(0,0,0,0.7)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <img
+            src={modalImg}
+            alt="Large"
+            style={{
+              maxWidth: "90vw",
+              maxHeight: "90vh",
+              borderRadius: 12,
+              boxShadow: "0 4px 32px #0008",
+              background: "#fff",
+            }}
+            onClick={e => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 };

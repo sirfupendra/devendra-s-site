@@ -8,6 +8,7 @@ const propertySchema = new mongoose.Schema({
   furnishing: String,
   size: String,
   description: String,
+  isFeatured: { type: Boolean, default: false }, // For featured properties
   images: [String], // Cloudinary image URLs
   status: { type: String, default: "available" }, // available / rented
   createdAt: { type: Date, default: Date.now }

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import API from "../api";
 import { setToken } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -21,6 +22,7 @@ const AdminLogin = () => {
 
   return (
     <div style={{ padding: 24, maxWidth: 400, margin: "auto" }}>
+      <Header />
       <h2>Admin Login</h2>
       <input
         type="email"

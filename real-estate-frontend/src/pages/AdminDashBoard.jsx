@@ -16,13 +16,14 @@ const AdminDashboard = () => {
     furnishing: "",
     size: "",
     description: "",
+    isFeatured: false,
     status: "available",
     images: "", // comma-separated Cloudinary URLs
   });
   const navigate = useNavigate();
 
   const fetchProperties = async () => {
-    const res = await API.get("/properties");
+    const res = await API.get("/properties/featured");
     setProperties(res.data);
   };
 
@@ -66,6 +67,7 @@ const AdminDashboard = () => {
       furnishing: "",
       size: "",
       description: "",
+      isFeatured: false,
       status: "available",
       images: "",
     });
@@ -82,18 +84,25 @@ const AdminDashboard = () => {
   }, []);
 
   // Handle file upload
-  const handleFileChange = async (e) => {
-    const files = e.target.files;
-    const urls = [];
-    for (const file of files) {
-      const url = await uploadToCloudinary(file);
-      urls.push(url);
-    }
-    setFormData((prev) => ({
-      ...prev,
-      images: urls.join(","),
-    }));
-  };
+  // In AdminDashBoard.jsx
+
+const handleFileChange = async (e) => {
+  const files = Array.from(e.target.files);
+  const urls = [];
+
+  for (const file of files) {
+    const url = await uploadToCloudinary(file);
+    urls.push(url);
+  }
+
+  // Combine existing images with new ones
+  setFormData((prev) => ({
+    ...prev,
+    images: prev.images
+      ? prev.images.split(",").concat(urls).join(",")
+      : urls.join(","),
+  }));
+};
 
   return (
     <div style={{ padding: 24 }}>
@@ -182,6 +191,7 @@ const AdminDashboard = () => {
                   furnishing: p.furnishing,
                   size: p.size,
                   description: p.description,
+                  isFeatured: p.isFeatured,
                   status: p.status,
                   images: p.images.join(","),
                 });

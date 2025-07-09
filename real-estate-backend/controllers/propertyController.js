@@ -12,6 +12,7 @@ exports.addProperty = async (req, res) => {
       furnishing,
       size,
       description,
+      isFeatured, // Optional field for featured properties
       status,
       images, // Expecting array of URLs
     } = req.body;
@@ -24,6 +25,7 @@ exports.addProperty = async (req, res) => {
       furnishing,
       size,
       description,
+      isFeatured: isFeatured || false, // Default to false if not provided
       images, // Save URLs directly
       status,
     });
@@ -42,6 +44,46 @@ exports.getAllProperties = async (req, res) => {
     res.json(properties);
   } catch (err) {
     res.status(500).json({ message: "Error fetching properties" });
+  }
+};
+
+// Get featured properties
+exports.getFeaturedProperties = async (req, res) => {
+  try {
+    const featuredProperties = await Property.find({ isFeatured: true }).sort({ createdAt: -1 });
+    res.json(featuredProperties);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching featured properties" });
+  }
+};
+
+// get filtered properties
+exports.getFilteredProperties = async (req, res) => {
+  try {
+    let { location, minPrice, maxPrice, bhk } = req.query;
+
+    // Convert price and bhk to numbers if provided
+    minPrice = minPrice ? Number(minPrice) : 0;
+    maxPrice = maxPrice ? Number(maxPrice) : Number.MAX_SAFE_INTEGER;
+    bhk = bhk ? Number(bhk) : undefined;
+
+    // Build query object
+    const query = {
+      price: { $gte: minPrice, $lte: maxPrice },
+    };
+
+    if (location) {
+      query.location = new RegExp(location, "i");
+    }
+    if (bhk) {
+      query.bhk = bhk;
+    }
+
+    const getFilteredProperties = await Property.find(query).sort({ createdAt: -1 });
+
+    res.status(200).json(getFilteredProperties);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching filtered properties" });
   }
 };
 

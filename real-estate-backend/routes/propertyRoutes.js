@@ -9,10 +9,14 @@ const {
   deleteProperty,
   getProperty,
   updateProperty,
+  getFeaturedProperties,
+  getFilteredProperties, // Assuming this function is defined in propertyController
 } = require("../controllers/propertyController");
 
 // Public Routes
 router.get("/", getAllProperties);
+router.get("/featured",getFeaturedProperties);
+router.get("/filter", getFilteredProperties); // Assuming this function is defined in propertyController
 router.get("/:id", getProperty);
 
 // Admin Protected Routes
