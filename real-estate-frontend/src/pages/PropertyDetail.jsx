@@ -15,54 +15,56 @@ const PropertyDetail = () => {
     fetchProperty();
   }, [id]);
 
-  if (!property) return <p>Loading...</p>;
+  if (!property) return <p className="text-center py-10 text-lg text-gray-500">Loading...</p>;
 
   return (
-    <div style={{ padding: 24 }}>
-      <h2>{property.title}</h2>
-      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 24 }}>
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <h2 className="text-2xl md:text-3xl font-bold text-primary mb-6 text-center">{property.title}</h2>
+      {/* Image Gallery */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         {property.images.map((img, i) => (
           <img
             key={i}
             src={img}
             alt={`Property ${i}`}
-            style={{ width: 300, height: 200, objectFit: "cover", borderRadius: 8, cursor: "pointer" }}
+            className="w-full h-56 sm:h-64 object-cover rounded-lg shadow cursor-pointer hover:scale-105 transition-transform"
             onClick={() => setModalImg(img)}
           />
         ))}
       </div>
-      <p><strong>Rent:</strong> ₹{property.price} / month</p>
-      <p><strong>Location:</strong> {property.location}</p>
-      <p><strong>BHK:</strong> {property.bhk}</p>
-      <p><strong>Size:</strong> {property.size}</p>
-      <p><strong>Furnishing:</strong> {property.furnishing}</p>
-      <p><strong>Status:</strong> {property.status}</p>
-      <p><strong>Description:</strong> {property.description}</p>
+      {/* Property Details */}
+      <div className="bg-white rounded-lg shadow p-6 flex flex-col gap-3">
+        <div className="flex flex-wrap gap-4 mb-2">
+          <span className="bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1 rounded-full">
+            {property.bhk} BHK
+          </span>
+          <span className="bg-green-50 text-green-700 text-xs font-medium px-3 py-1 rounded-full">
+            {property.size} sqft
+          </span>
+          <span className="bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1 rounded-full">
+            {property.furnishing}
+          </span>
+          <span className={`text-xs font-semibold px-3 py-1 rounded-full ${property.status === "available" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+            {property.status}
+          </span>
+        </div>
+        <p className="text-xl font-bold text-primary mb-1">
+          ₹{property.price} <span className="text-base font-normal text-gray-500">/ month</span>
+        </p>
+        <p className="text-gray-700 mb-1"><strong>Location:</strong> {property.location}</p>
+        <p className="text-gray-700 mb-1"><strong>Description:</strong> {property.description}</p>
+      </div>
 
       {/* Modal for large image */}
       {modalImg && (
         <div
           onClick={() => setModalImg(null)}
-          style={{
-            position: "fixed",
-            top: 0, left: 0, right: 0, bottom: 0,
-            background: "rgba(0,0,0,0.7)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-          }}
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
         >
           <img
             src={modalImg}
             alt="Large"
-            style={{
-              maxWidth: "90vw",
-              maxHeight: "90vh",
-              borderRadius: 12,
-              boxShadow: "0 4px 32px #0008",
-              background: "#fff",
-            }}
+            className="max-w-[90vw] max-h-[90vh] rounded-xl shadow-2xl bg-white"
             onClick={e => e.stopPropagation()}
           />
         </div>
