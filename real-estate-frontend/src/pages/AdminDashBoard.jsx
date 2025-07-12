@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import API from "../api";
 import { getToken, removeToken } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
-
 import { uploadToCloudinary } from "../utils/uploadToCloudinary";
 
 const AdminDashboard = () => {
@@ -18,12 +17,12 @@ const AdminDashboard = () => {
     description: "",
     isFeatured: false,
     status: "available",
-    images: "", // comma-separated Cloudinary URLs
+    images: "",
   });
   const navigate = useNavigate();
 
   const fetchProperties = async () => {
-    const res = await API.get("/properties/featured");
+    const res = await API.get("/properties");
     setProperties(res.data);
   };
 
@@ -83,122 +82,125 @@ const AdminDashboard = () => {
     fetchProperties();
   }, []);
 
-  // Handle file upload
-  // In AdminDashBoard.jsx
+  const handleFileChange = async (e) => {
+    const files = Array.from(e.target.files);
+    const urls = [];
 
-const handleFileChange = async (e) => {
-  const files = Array.from(e.target.files);
-  const urls = [];
+    for (const file of files) {
+      const url = await uploadToCloudinary(file);
+      urls.push(url);
+    }
 
-  for (const file of files) {
-    const url = await uploadToCloudinary(file);
-    urls.push(url);
-  }
-
-  // Combine existing images with new ones
-  setFormData((prev) => ({
-    ...prev,
-    images: prev.images
-      ? prev.images.split(",").concat(urls).join(",")
-      : urls.join(","),
-  }));
-};
+    setFormData((prev) => ({
+      ...prev,
+      images: prev.images
+        ? prev.images.split(",").concat(urls).join(",")
+        : urls.join(","),
+    }));
+  };
 
   return (
-    <div style={{ padding: 24 }}>
-      <h2>Admin Dashboard</h2>
-      <button onClick={logout}>Logout</button>
-
-      <h3 style={{ marginTop: 24 }}>{editingId ? "Edit Property" : "Add New Property"}</h3>
-      <form
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 10,
-          maxWidth: 400,
-        }}
-        onSubmit={handleSubmit}
-      >
-        {Object.keys(formData)
-          .filter((field) => field !== "images")
-          .map((field) => (
-            <input
-              key={field}
-              type="text"
-              placeholder={field}
-              value={formData[field]}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, [field]: e.target.value }))
-              }
-            />
-          ))}
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-        <button type="submit">
-          {editingId ? "Update Property" : "Add Property"}
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-bold text-blue-700">Admin Dashboard</h2>
+        <button
+          onClick={logout}
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-semibold transition"
+        >
+          Logout
         </button>
-        {editingId && (
-          <button type="button" onClick={resetForm}>
-            Cancel Edit
-          </button>
-        )}
-      </form>
+      </div>
 
-      <h3 style={{ marginTop: 40 }}>All Properties</h3>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: 24,
-        }}
-      >
+      <div className="bg-white rounded-xl shadow p-6 max-w-xl mx-auto mb-10">
+        <h3 className="text-xl font-semibold mb-4">
+          {editingId ? "Edit Property" : "Add New Property"}
+        </h3>
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          {Object.keys(formData)
+            .filter((field) => field !== "images")
+            .map((field) => (
+              <input
+                key={field}
+                type="text"
+                placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                value={formData[field]}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, [field]: e.target.value }))
+                }
+                className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+            ))}
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={handleFileChange}
+            className="border border-gray-300 rounded-md px-4 py-2"
+          />
+          <div className="flex gap-4">
+            <button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md transition"
+            >
+              {editingId ? "Update Property" : "Add Property"}
+            </button>
+            {editingId && (
+              <button
+                type="button"
+                onClick={resetForm}
+                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold px-6 py-2 rounded-md transition"
+              >
+                Cancel Edit
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+
+      <h3 className="text-2xl font-semibold mb-4">All Properties</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {properties.map((p) => (
           <div
             key={p._id}
-            style={{
-              border: "1px solid #ccc",
-              padding: 16,
-              borderRadius: 8,
-            }}
+            className="bg-white border border-gray-200 rounded-xl shadow p-4 flex flex-col"
           >
             <img
               src={p.images[0]}
               alt={p.title}
-              style={{
-                width: "100%",
-                height: 180,
-                objectFit: "cover",
-                borderRadius: 8,
-              }}
+              className="w-full h-44 object-cover rounded-md mb-3"
             />
-            <h4>{p.title}</h4>
-            <p>
+            <h4 className="text-lg font-bold mb-1">{p.title}</h4>
+            <p className="text-gray-700 mb-2">
               ₹{p.price} | {p.location}
             </p>
-            <button onClick={() => handleDelete(p._id)}>Delete</button>
-            <button
-              onClick={() => {
-                setEditingId(p._id);
-                setFormData({
-                  title: p.title,
-                  price: p.price,
-                  location: p.location,
-                  bhk: p.bhk,
-                  furnishing: p.furnishing,
-                  size: p.size,
-                  description: p.description,
-                  isFeatured: p.isFeatured,
-                  status: p.status,
-                  images: p.images.join(","),
-                });
-              }}
-            >
-              Edit
-            </button>
+            <div className="flex gap-2 mt-auto">
+              <button
+                onClick={() => handleDelete(p._id)}
+                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition"
+              >
+                Delete
+              </button>
+              <button
+                onClick={() => {
+                  setEditingId(p._id);
+                  setFormData({
+                    title: p.title,
+                    price: p.price,
+                    location: p.location,
+                    bhk: p.bhk,
+                    furnishing: p.furnishing,
+                    size: p.size,
+                    description: p.description,
+                    isFeatured: p.isFeatured,
+                    status: p.status,
+                    images: p.images.join(","),
+                  });
+                }}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm transition"
+              >
+                Edit
+              </button>
+            </div>
           </div>
         ))}
       </div>

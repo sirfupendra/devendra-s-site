@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 
 // Replace these URLs with your own images
 const images = [
-  "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=80",
+  "https://www.team.propira.com/images/blog/extra_image/blogextra-1632566899.png",
+  "https://www.adanirealty.com/-/media/project/realty/blogs/what-is-the-difference-between-a-villa-and-an-apartment_.ashx",
+  "https://victoriarealtors.in/wp-content/uploads/2023/05/shutterstock_2066280941-1024x576.jpg",
 ];
 
 function HeroSection() {

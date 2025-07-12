@@ -9,7 +9,7 @@ const Home = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await API.get("/properties");
+      const res = await API.get("/properties/featured");
       setProperties(res.data);
     };
     fetchData();

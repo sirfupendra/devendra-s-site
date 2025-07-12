@@ -57,35 +57,50 @@ exports.getFeaturedProperties = async (req, res) => {
   }
 };
 
-// get filtered properties
+// Get filtered properties
 exports.getFilteredProperties = async (req, res) => {
   try {
     let { location, minPrice, maxPrice, bhk } = req.query;
 
-    // Convert price and bhk to numbers if provided
+    // Convert query params to appropriate types
     minPrice = minPrice ? Number(minPrice) : 0;
     maxPrice = maxPrice ? Number(maxPrice) : Number.MAX_SAFE_INTEGER;
     bhk = bhk ? Number(bhk) : undefined;
 
-    // Build query object
+    // Build the query object
     const query = {
       price: { $gte: minPrice, $lte: maxPrice },
     };
 
     if (location) {
-      query.location = new RegExp(location, "i");
+      query.location = new RegExp(location, "i"); // case-insensitive match
     }
+
     if (bhk) {
       query.bhk = bhk;
     }
 
-    const getFilteredProperties = await Property.find(query).sort({ createdAt: -1 });
+    const filteredProperties = await Property.find(query).sort({ createdAt: -1 });
 
-    res.status(200).json(getFilteredProperties);
+    res.status(200).json(filteredProperties);
   } catch (err) {
+    console.error("Error in getFilteredProperties:", err);
     res.status(500).json({ message: "Error fetching filtered properties" });
   }
 };
+
+exports.getAllLocations = async (req, res) => {
+  try {
+    const locations = await Property.distinct("location");
+    res.status(200).json(locations);
+  } catch (err) {
+    console.error("Error fetching locations:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
 
 // Delete property
 exports.deleteProperty = async (req, res) => {

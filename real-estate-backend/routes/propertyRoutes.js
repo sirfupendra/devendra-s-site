@@ -10,11 +10,13 @@ const {
   getProperty,
   updateProperty,
   getFeaturedProperties,
+  getAllLocations, // Assuming this function is defined in propertyController
   getFilteredProperties, // Assuming this function is defined in propertyController
 } = require("../controllers/propertyController");
 
 // Public Routes
 router.get("/", getAllProperties);
+router.get("/locations", getAllLocations); // Assuming this function is defined in propertyController
 router.get("/featured",getFeaturedProperties);
 router.get("/filter", getFilteredProperties); // Assuming this function is defined in propertyController
 router.get("/:id", getProperty);

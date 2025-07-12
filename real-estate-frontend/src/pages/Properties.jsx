@@ -1,89 +1,145 @@
-import React from 'react'
-import Header from '../components/Header'
-import API from "../api";// Assuming you have an API utility for making requests
+import React, { useState, useEffect } from "react";
+import Header from "../components/Header";
+import PropertyCard from "../components/PropertyCard";
 
-function Properties() {
-  const [formData, setFormData] = React.useState({
-    location: '',
-    minPrice: '',
-    maxPrice: '',
-    bhk: '1',
-  });
-  const [properties, setProperties] = React.useState([]);
+const Properties = () => {
+  const [location, setLocation] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [bhk, setBhk] = useState("");
+  const [properties, setProperties] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+  const [allLocations, setAllLocations] = useState([]); // for suggestion
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  // Fetch distinct locations for suggestions
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/properties/locations");
+        const data = await res.json();
+        setAllLocations(data);
+      } catch (err) {
+        console.error("Error fetching locations", err);
+      }
+    };
+    fetchLocations();
+  }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Show suggestions as user types
+  useEffect(() => {
+    if (location.length === 0) {
+      setSuggestions([]);
+    } else {
+      const filtered = allLocations.filter((loc) =>
+        loc.toLowerCase().includes(location.toLowerCase())
+      );
+      setSuggestions(filtered.slice(0, 5));
+    }
+  }, [location, allLocations]);
+
+  const handleSearch = async () => {
+    const params = new URLSearchParams();
+    if (location) params.append("location", location);
+    if (minPrice) params.append("minPrice", minPrice);
+    if (maxPrice) params.append("maxPrice", maxPrice);
+    if (bhk) params.append("bhk", bhk);
+
     try {
-      const res = await API.get("/properties/filter", {
-        params: {
-          location: formData.location,
-          minPrice: formData.minPrice,
-          maxPrice: formData.maxPrice,
-          bhk: formData.bhk,
-        }
-      });
-      setProperties(res.data);
-      console.log("Form submitted with data:", formData);
-    } catch (err) {
-      console.error("Error fetching properties:", err);
+      const res = await fetch(
+        `http://localhost:5000/api/properties/filter?${params}`
+      );
+      const data = await res.json();
+      setProperties(data);
+    } catch (error) {
+      console.error("Failed to fetch properties", error);
     }
   };
 
   return (
-    <div>
+    <div className="bg-gray-50 min-h-screen">
       <Header />
-      <h2>Property Listing</h2>
-      <h4>Find Your Perfect rental from our collection</h4>
-      <form onSubmit={handleSubmit}>
-        <h3>Filter Properties</h3>
-        <label>
-          Location:
-          <input type="text" name="location" onChange={handleChange} />
-        </label>
-        <label>
-          Price Range:
-          <input type="number" name="minPrice" placeholder="Min Price" onChange={handleChange} />
-          <input type="number" name="maxPrice" placeholder="Max Price" onChange={handleChange} />
-        </label>
-        <label>
-          BHk:
-          <select name="bhk" value={formData.bhk} onChange={handleChange}>
-            <option value="1">1 BHK</option>
-            <option value="2">2 BHK</option>
-            <option value="3">3 BHK</option>
-            <option value="4">4 BHK</option>
-            <option value="5">5 BHK</option>
-          </select>
-        </label>
-        <button type="submit">Search</button>
-      </form>
+      <div className="max-w-6xl mx-auto p-4">
+        <h2 className="text-3xl font-bold text-center text-blue-700 mb-8">
+          Find Your Dream Rental
+        </h2>
 
-      {/* Display filtered properties */}
-      <div>
-        {properties.length > 0 ? (
-          properties.map((property) => (
-            <div key={property._id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
-              <h4>{property.title}</h4>
-              <p>{property.location}</p>
-              <p>₹{property.price}</p>
-              <p>{property.bhk} BHK</p>
-              {/* Add more property details as needed */}
-            </div>
-          ))
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+          {/* Location Input with Animation */}
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Enter location..."
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className={`w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                location.length === 0 ? "animate-pulse bg-gray-100" : ""
+              }`}
+            />
+            {/* Suggestions dropdown */}
+            {suggestions.length > 0 && (
+              <ul className="absolute z-10 mt-1 bg-white border border-gray-300 rounded shadow w-full max-h-40 overflow-y-auto">
+                {suggestions.map((sugg, i) => (
+                  <li
+                    key={i}
+                    className="p-2 hover:bg-blue-50 cursor-pointer text-sm"
+                    onClick={() => {
+                      setLocation(sugg);
+                      setSuggestions([]);
+                    }}
+                  >
+                    {sugg}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <input
+            type="number"
+            placeholder="Min Price"
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+            className="border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <input
+            type="number"
+            placeholder="Max Price"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+            className="border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <input
+            type="number"
+            placeholder="BHK"
+            value={bhk}
+            onChange={(e) => setBhk(e.target.value)}
+            className="border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+
+        <div className="text-center mb-6">
+          <button
+            onClick={handleSearch}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold text-lg shadow transition"
+          >
+            🔍 Search
+          </button>
+        </div>
+
+        {properties.length === 0 ? (
+          <p className="text-gray-500 text-center mt-10">
+            No properties found. Try adjusting your filters.
+          </p>
         ) : (
-          <p>No properties found.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {properties.map((property) => (
+              <PropertyCard key={property._id} property={property} />
+            ))}
+          </div>
         )}
       </div>
     </div>
   );
-}
+};
 
 export default Properties;
