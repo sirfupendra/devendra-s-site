@@ -5,7 +5,7 @@ import Home from "./pages/Home";
 import PropertyDetail from "./pages/PropertyDetail";
 import AdminLogin from "./pages/AdminLogin";
 import PrivateRoute from "./components/PrivateRoute";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboard from "./pages/AdminDashBoard";
 import Properties from "./pages/Properties";
 import ContactUs from "./pages/ContactUs";
 
