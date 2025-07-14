@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "../api";
 import PropertyCard from "../components/PropertyCard";
+import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import HeroSection from "./HeroSection";
 import {
@@ -80,12 +81,11 @@ const HomePage = () => {
 
         {/* View All Button */}
         <div className="mt-12 flex justify-center">
-          <a
-            href="/properties"
-            className="inline-block bg-primary text-white px-6 py-3 rounded-xl shadow hover:bg-primary-dark transform hover:scale-105 transition-all duration-300 font-semibold text-lg"
-          >
-            View All Properties
-          </a>
+         <Link to="/properties">
+            <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-semibold text-lg">
+              View All Properties
+            </button>
+          </Link>
         </div>
       </section>
     </div>
