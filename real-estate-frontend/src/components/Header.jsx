@@ -5,64 +5,46 @@ function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white shadow-md border-b border-gray-200">
+    <header className="bg-white shadow-lg border-b border-gray-200 font-poppins">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link
-              to="/"
-              className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
-            >
-              Rental Ease
-            </Link>
+          <div className="text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text">
+            <Link to="/">Rental Ease</Link>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:block">
-            <ul className="flex items-center space-x-8">
-              <li>
-                <Link
-                  to="/"
-                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/properties"
-                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                >
-                  Properties
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/contact"
-                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                >
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/admin/login"
-                  className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-sm"
-                >
-                  Admin Login
-                </Link>
-              </li>
-            </ul>
+          <nav className="hidden md:flex items-center space-x-6 text-sm font-semibold">
+            {[
+              { path: "/", label: "Home" },
+              { path: "/properties", label: "Properties" },
+              { path: "/contact", label: "Contact Us" },
+            ].map((item) => (
+              <Link
+                key={item.label}
+                to={item.path}
+                className="text-gray-700 hover:text-blue-600 transition-all duration-200"
+              >
+                {item.label}
+              </Link>
+            ))}
+
+            {/* Animated Admin Login */}
+            <Link
+              to="/admin/login"
+              className="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white px-5 py-2 rounded-full shadow-lg transform hover:scale-105 hover:rotate-1 hover:shadow-2xl active:animate-ping transition-all duration-300"
+            >
+              Admin Login
+            </Link>
           </nav>
 
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button
               type="button"
-              className="text-gray-700 hover:text-blue-600 focus:outline-none focus:text-blue-600 p-2"
+              className="text-gray-700 hover:text-blue-600 p-2 focus:outline-none"
               aria-label="Toggle menu"
-              onClick={() => setMenuOpen((prev) => !prev)}
+              onClick={() => setMenuOpen(!menuOpen)}
             >
               <svg
                 className="h-6 w-6"
@@ -71,7 +53,6 @@ function Header() {
                 stroke="currentColor"
               >
                 {menuOpen ? (
-                  // X icon
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -79,7 +60,6 @@ function Header() {
                     d="M6 18L18 6M6 6l12 12"
                   />
                 ) : (
-                  // Hamburger icon
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -94,33 +74,33 @@ function Header() {
 
         {/* Mobile Navigation Menu */}
         {menuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200 mt-2 bg-white rounded-b-lg shadow">
+          <div className="md:hidden mt-2 transition-all duration-300">
+            <div className="px-4 pt-3 pb-4 space-y-2 border-t border-gray-200 bg-white rounded-b-lg shadow">
               <Link
                 to="/"
-                className="block text-gray-700 hover:text-blue-600 hover:bg-gray-50 px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                 onClick={() => setMenuOpen(false)}
+                className="block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md font-medium transition duration-200"
               >
                 Home
               </Link>
               <Link
                 to="/properties"
-                className="block text-gray-700 hover:text-blue-600 hover:bg-gray-50 px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                 onClick={() => setMenuOpen(false)}
+                className="block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md font-medium transition duration-200"
               >
                 Properties
               </Link>
               <Link
                 to="/contact"
-                className="block text-gray-700 hover:text-blue-600 hover:bg-gray-50 px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                 onClick={() => setMenuOpen(false)}
+                className="block text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md font-medium transition duration-200"
               >
                 Contact Us
               </Link>
               <Link
                 to="/admin/login"
-                className="block bg-blue-600 text-white hover:bg-blue-700 px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 mt-2"
                 onClick={() => setMenuOpen(false)}
+                className="block bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white px-3 py-2 rounded-full text-center shadow hover:scale-105 hover:shadow-xl transition-all duration-300"
               >
                 Admin Login
               </Link>
