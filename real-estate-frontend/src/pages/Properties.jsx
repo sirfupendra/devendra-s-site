@@ -15,7 +15,7 @@ const Properties = () => {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/properties/locations");
+        const res = await fetch("https://devendra-s-site-2.onrender.com/api/properties/locations");
         const data = await res.json();
         setAllLocations(data);
       } catch (err) {
@@ -46,7 +46,7 @@ const Properties = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/properties/filter?${params}`
+        `https://devendra-s-site-2.onrender.com/api/properties/filter?${params}`
       );
       const data = await res.json();
       setProperties(data);
