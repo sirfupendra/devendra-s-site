@@ -13,7 +13,7 @@ function HeroSection() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % images.length);
-    }, 8000); // Wait 8s per image for smoother feel
+    }, 6000); // Wait 8s per image for smoother feel
     return () => clearInterval(interval);
   }, []);
 
